@@ -72,15 +72,6 @@ class Answer(db.Model):
 
 # Ruta para crear encuestas con preguntas y opciones
 @app.route('/create-surveys', methods=['POST'])
-@swag_from({
-    'summary': 'Crear encuestas con preguntas y opciones.',
-    'description': 'Crea 10 encuestas, cada una con 10 preguntas y 4 opciones por pregunta.',
-    'responses': {
-        201: {
-            'description': 'Encuestas creadas exitosamente.'
-        }
-    }
-})
 def create_surveys():
     survey_titles = [
         "Satisfacción del Cliente",
