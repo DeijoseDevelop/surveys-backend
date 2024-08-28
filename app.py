@@ -501,5 +501,47 @@ def submit_response():
 
     return jsonify({"message": "Response submitted successfully"}), 201
 
+@app.route('/answers', methods=['GET'])
+@jwt_required()
+@swag_from({
+    'summary': 'Obtener respuestas individuales (Answers) con filtros.',
+    'description': 'Obtiene las respuestas individuales filtradas por response_id, question_id, y/o selected_option_id.',
+    'parameters': [
+        {'name': 'response_id', 'in': 'query', 'type': 'integer', 'description': 'ID de la respuesta general (Response)'},
+        {'name': 'question_id', 'in': 'query', 'type': 'integer', 'description': 'ID de la pregunta (Question)'},
+        {'name': 'selected_option_id', 'in': 'query', 'type': 'integer', 'description': 'ID de la opción seleccionada (Option)'}
+    ],
+    'responses': {
+        200: {
+            'description': 'Lista de respuestas filtradas.'
+        }
+    }
+})
+def get_answers():
+    response_id = request.args.get('response_id')
+    question_id = request.args.get('question_id')
+    selected_option_id = request.args.get('selected_option_id')
+
+    query = Answer.query
+
+    if response_id:
+        query = query.filter_by(response_id=response_id)
+
+    if question_id:
+        query = query.filter_by(question_id=question_id)
+
+    if selected_option_id:
+        query = query.filter_by(selected_option_id=selected_option_id)
+
+    answers = query.all()
+
+    return jsonify([{
+        'id': answer.id,
+        'response_id': answer.response_id,
+        'question_id': answer.question_id,
+        'selected_option_id': answer.selected_option_id
+    } for answer in answers])
+
+
 if __name__ == '__main__':
     app.run(debug=True)
